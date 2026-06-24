@@ -1,0 +1,92 @@
+body{
+    font-family: Arial, sans-serif;
+    background: linear-gradient(135deg, #74ebd5, #ACB6E5);
+    margin: 0;
+    padding: 0;
+    text-align: center;
+}
+
+#quizContainer{
+    width: 700px;
+    margin: 50px auto;
+    background: white;
+    padding: 30px;
+    border-radius: 20px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+}
+
+h1{
+    color: #333;
+}
+
+#timer{
+    font-size: 28px;
+    font-weight: bold;
+    color: #ff4d4d;
+    margin-bottom: 20px;
+}
+
+#status{
+    font-size: 18px;
+    color: #666;
+    margin-bottom: 20px;
+}
+
+#question{
+    font-size: 28px;
+    margin-bottom: 30px;
+    color: #222;
+    font-weight: bold;
+}
+
+.choiceButton{
+    width: 80%;
+    padding: 15px;
+    margin: 10px 0;
+    font-size: 20px;
+    border: none;
+    border-radius: 12px;
+    background: #4A90E2;
+    color: white;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.choiceButton:hover{
+    background: #357ABD;
+    transform: scale(1.03);
+}
+
+#startButton{
+    padding: 15px 40px;
+    font-size: 24px;
+    border: none;
+    border-radius: 15px;
+    background: #28c76f;
+    color: white;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+#startButton:hover{
+    background: #20a85a;
+    transform: scale(1.05);
+}
+
+#result{
+    margin-top: 30px;
+    font-size: 24px;
+}
+
+#result h1{
+    margin: 10px 0;
+}
+
+#result h2{
+    color: #444;
+}
+
+#result p{
+    font-size: 20px;
+    color: #666;
+}
