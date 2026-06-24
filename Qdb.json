@@ -1,0 +1,319 @@
+{
+  "cells": [
+    {
+      "cell_type": "code",
+      "source": [
+        "import sqlite3\n",
+        "\n",
+        "# データベース作成（存在しなければ新規作成）\n",
+        "conn = sqlite3.connect('quiz.db')\n",
+        "cur = conn.cursor()\n",
+        "\n",
+        "# テーブル作成\n",
+        "cur.execute('''\n",
+        "CREATE TABLE IF NOT EXISTS questions (\n",
+        "    id INTEGER PRIMARY KEY AUTOINCREMENT,\n",
+        "    question TEXT NOT NULL,\n",
+        "    choice1 TEXT NOT NULL,\n",
+        "    choice2 TEXT NOT NULL,\n",
+        "    choice3 TEXT NOT NULL,\n",
+        "    choice4 TEXT NOT NULL,\n",
+        "    answer INTEGER NOT NULL\n",
+        ")\n",
+        "''')\n",
+        "\n",
+        "conn.commit()\n",
+        "print(\"データベース作成完了\")"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "9KJQSYdkw2F1",
+        "outputId": "87213df5-e525-42e8-8819-3f1a38d260b2"
+      },
+      "execution_count": 1,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "データベース作成完了\n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "cur.execute('''\n",
+        "INSERT INTO questions\n",
+        "(question, choice1, choice2, choice3, choice4, answer)\n",
+        "VALUES\n",
+        "(?, ?, ?, ?, ?, ?)\n",
+        "''',\n",
+        "('日本の首都はどこですか？',\n",
+        " '大阪',\n",
+        " '東京',\n",
+        " '名古屋',\n",
+        " '福岡',\n",
+        " 2))\n",
+        "\n",
+        "conn.commit()\n",
+        "print(\"問題登録完了\")"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "axIRpdsbw-Fn",
+        "outputId": "d08e0002-8868-4520-cbcb-1362090d7d26"
+      },
+      "execution_count": null,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "問題登録完了\n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "cur.execute(\"SELECT * FROM questions\")\n",
+        "\n",
+        "for row in cur.fetchall():\n",
+        "    print(row)"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "-EysTKdfw-KU",
+        "outputId": "4ccd05f1-6394-4723-e4c4-3ad9a8a9c149"
+      },
+      "execution_count": null,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "(1, '日本の首都はどこですか？', '大阪', '東京', '名古屋', '福岡', 2)\n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "import io\n",
+        "import csv\n",
+        "\n",
+        "csv_data = \"\"\"question,choice1,choice2,choice3,choice4,answer\n",
+        "日本の首都はどこですか？,大阪,東京,名古屋,福岡,2\"\"\"\n",
+        "\n",
+        "# Read the CSV data using io.StringIO and csv.reader\n",
+        "csv_file = io.StringIO(csv_data)\n",
+        "reader = csv.reader(csv_file)\n",
+        "\n",
+        "# Get the header\n",
+        "header = next(reader)\n",
+        "print(f\"Header: {header}\")\n",
+        "\n",
+        "# Get the data rows\n",
+        "data = []\n",
+        "for row in reader:\n",
+        "    data.append(row)\n",
+        "print(f\"Parsed data: {data}\")"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "B3E96eWpw-M5",
+        "outputId": "d5c8b401-3bbf-453b-9b69-55433b1c960f"
+      },
+      "execution_count": null,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "Header: ['question', 'choice1', 'choice2', 'choice3', 'choice4', 'answer']\n",
+            "Parsed data: [['日本の首都はどこですか？', '大阪', '東京', '名古屋', '福岡', '2']]\n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "cur.execute(\"\"\"\n",
+        "SELECT * FROM questions\n",
+        "ORDER BY RANDOM()\n",
+        "LIMIT 1\n",
+        "\"\"\")\n",
+        "\n",
+        "print(cur.fetchone())"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "XksmHbfkw-Pk",
+        "outputId": "b085bce1-8368-45a8-c143-cf0c5f6207a5"
+      },
+      "execution_count": null,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "(1, '日本の首都はどこですか？', '大阪', '東京', '名古屋', '福岡', 2)\n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "from google.colab import files\n",
+        "\n",
+        "files.download('quiz.db')"
+      ],
+      "metadata": {
+        "id": "BvAuRZtTz3TU",
+        "outputId": "399b888e-da43-4f08-cbd0-2080bfc2ebbc",
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 17
+        }
+      },
+      "execution_count": null,
+      "outputs": [
+        {
+          "output_type": "display_data",
+          "data": {
+            "text/plain": [
+              "<IPython.core.display.Javascript object>"
+            ],
+            "application/javascript": [
+              "\n",
+              "    async function download(id, filename, size) {\n",
+              "      if (!google.colab.kernel.accessAllowed) {\n",
+              "        return;\n",
+              "      }\n",
+              "      const div = document.createElement('div');\n",
+              "      const label = document.createElement('label');\n",
+              "      label.textContent = `Downloading \"${filename}\": `;\n",
+              "      div.appendChild(label);\n",
+              "      const progress = document.createElement('progress');\n",
+              "      progress.max = size;\n",
+              "      div.appendChild(progress);\n",
+              "      document.body.appendChild(div);\n",
+              "\n",
+              "      const buffers = [];\n",
+              "      let downloaded = 0;\n",
+              "\n",
+              "      const channel = await google.colab.kernel.comms.open(id);\n",
+              "      // Send a message to notify the kernel that we're ready.\n",
+              "      channel.send({})\n",
+              "\n",
+              "      for await (const message of channel.messages) {\n",
+              "        // Send a message to notify the kernel that we're ready.\n",
+              "        channel.send({})\n",
+              "        if (message.buffers) {\n",
+              "          for (const buffer of message.buffers) {\n",
+              "            buffers.push(buffer);\n",
+              "            downloaded += buffer.byteLength;\n",
+              "            progress.value = downloaded;\n",
+              "          }\n",
+              "        }\n",
+              "      }\n",
+              "      const blob = new Blob(buffers, {type: 'application/binary'});\n",
+              "      const a = document.createElement('a');\n",
+              "      a.href = window.URL.createObjectURL(blob);\n",
+              "      a.download = filename;\n",
+              "      div.appendChild(a);\n",
+              "      a.click();\n",
+              "      div.remove();\n",
+              "    }\n",
+              "  "
+            ]
+          },
+          "metadata": {}
+        },
+        {
+          "output_type": "display_data",
+          "data": {
+            "text/plain": [
+              "<IPython.core.display.Javascript object>"
+            ],
+            "application/javascript": [
+              "download(\"download_d3ec77d9-6b18-4d28-889e-a66adda93c89\", \"quiz.db\", 12288)"
+            ]
+          },
+          "metadata": {}
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "import json\n",
+        "from google.colab import drive\n",
+        "\n",
+        "# 1. Googleドライブをコラボに接続する（すでにマウント済みの場合はスキップされます）\n",
+        "drive.mount('/content/drive')\n",
+        "\n",
+        "# 2. ヘッダーと各行のデータを紐付けて、辞書型（オブジェクト）のリストを作る\n",
+        "quiz_list = []\n",
+        "for row in data:\n",
+        "    # row（各行の配列）が空でないか確認\n",
+        "    if len(row) == len(header):\n",
+        "        # ヘッダーの文字（question等）をキーにした辞書を作る\n",
+        "        quiz_obj = dict(zip(header, row))\n",
+        "        quiz_list.append(quiz_obj)\n",
+        "\n",
+        "# 3. Googleドライブの「マイドライブ」直下に「quiz.json」として保存する\n",
+        "file_path = '/content/drive/MyDrive/quiz.json'\n",
+        "with open(file_path, 'w', encoding='utf-8') as f:\n",
+        "    json.dump(quiz_list, f, ensure_ascii=False, indent=2)\n",
+        "\n",
+        "print(\"✅ JSON形式への変換とGoogleドライブへの保存が完了しました！\")\n"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "FBKiAWpa6zNC",
+        "outputId": "39db8226-73cb-45c0-ac71-a8576ed120e2"
+      },
+      "execution_count": null,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "Mounted at /content/drive\n",
+            "✅ JSON形式への変換とGoogleドライブへの保存が完了しました！\n"
+          ]
+        }
+      ]
+    }
+  ],
+  "metadata": {
+    "colab": {
+      "provenance": []
+    },
+    "kernelspec": {
+      "display_name": "Python 3",
+      "name": "python3"
+    }
+  },
+  "nbformat": 4,
+  "nbformat_minor": 0
+}

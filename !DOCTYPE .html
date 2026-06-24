@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>4択クイズ</title>
+
+<link rel="stylesheet" href="body11.css">
+    
+
+</head>
+
+<body>
+
+<audio id="correctSound" src="correct.mp3"></audio>
+
+<audio id="wrongSound" src="wrong.mp3"></audio>
+
+
+<div id="box">
+
+    <h1>4択クイズ</h1>
+
+   
+
+    <div id="question">
+        スタートを押してください
+    </div>
+    <div id="timerArea">
+    <div id="timer">100秒</div>
+
+    <div id="timerBarBox">
+        <div id="timerBar"></div>
+    </div>
+</div>
+    <div id="status"></div>
+    <div id="choices"></div>
+    <div id="result"></div>
+
+    <button id="startButton" onclick="startGame()">
+        スタート
+    </button>
+
+</div>
+
+<script src="script1.js"></script>
+
+</body>
+</html>
