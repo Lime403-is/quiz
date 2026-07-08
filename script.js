@@ -26,33 +26,34 @@ function shuffle(array) {
 }
 
 // --------------------
-// GASから取得
+// quiz.jsonから取得
 // --------------------
 function loadQuiz() {
     console.log("スタート押された");
 
-    fetch(
-        "https://google.com"
-    )
-    .then(response => {
-        console.log(response);
-        return response.text();
-    })
-    .then(text => {
-        console.log(text);
-        quiz = JSON.parse(text);
+    fetch("./quiz.json")
+        .then(response => {
+            if (!response.ok) {
+                throw new Error("quiz.jsonの読み込みに失敗しました");
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log(data);
 
-        if (quiz.length === 0) {
-            alert("問題がありません");
-            return;
-        }
+            quiz = data;
 
-        startGame();
-    })
-    .catch(error => {
-        console.error(error);
-        alert(error);
-    });
+            if (!Array.isArray(quiz) || quiz.length === 0) {
+                alert("問題がありません");
+                return;
+            }
+
+            startGame();
+        })
+        .catch(error => {
+            console.error(error);
+            alert(error.message);
+        });
 }
 
 // --------------------
@@ -68,6 +69,7 @@ function startGame() {
     wrongQuestions = [];
 
     showQuestion();
+    console.log(currentQuiz);
 }
 
 // --------------------
@@ -82,11 +84,10 @@ function showQuestion() {
     }
 
     let q = currentQuiz[current];
-    console.log("現在の問題データ:", q); 
+    console.log("現在の問題データ:", q);
 
     let rawChoices = q.choices;
 
-    // choicesが文字列なら配列に変換を試みる
     if (typeof rawChoices === "string") {
         try {
             rawChoices = JSON.parse(rawChoices.replace(/'/g, '"'));
@@ -95,7 +96,6 @@ function showQuestion() {
         }
     }
 
-    // 安全装置
     if (!Array.isArray(rawChoices)) {
         alert("エラー：選択肢データが正しい配列になっていません。");
         console.error("不正なデータ:", q);
@@ -123,14 +123,14 @@ function showQuestion() {
 
     document.getElementById("result").innerHTML = "";
 
-    let html = "";
-    for (let i = 0; i < q.shuffledChoices.length; i++) {
-        html += `
-            <button onclick="checkAnswer(${i})">
-                ${q.shuffledChoices[i]}
-            </button><br>
-        `;
-    }
+let html = "";
+for (let i = 0; i < q.shuffledChoices.length; i++) {
+    html += `
+        <button class="choiceButton" onclick="checkAnswer(${i})">
+            ${q.shuffledChoices[i]}
+        </button><br>
+    `;
+}
 
     document.getElementById("choices").innerHTML = html;
 
@@ -171,13 +171,14 @@ function timeUp() {
     if (answering) return;
     answering = true;
 
-    // 音声再生エラー対策（ファイルがない場合はスキップ）
     const wrongSound = document.getElementById("wrongSound");
     if (wrongSound) wrongSound.play().catch(() => {});
 
     document.getElementById("result").innerHTML = `
         <h2>時間切れ！</h2>
     `;
+
+    wrongQuestions.push(currentQuiz[current]);
 
     current++;
 
@@ -215,6 +216,7 @@ function checkAnswer(choice) {
         `;
     } else {
         wrongQuestions.push(q);
+
         const wrongSound = document.getElementById("wrongSound");
         if (wrongSound) wrongSound.play().catch(() => {});
 
@@ -268,6 +270,7 @@ function startReview() {
     }
 
     currentQuiz = shuffle(wrongQuestions);
+
     wrongQuestions = [];
     current = 0;
     score = 0;
